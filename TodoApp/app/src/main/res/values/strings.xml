@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">TodoApp</string>
+    <string name="label_task_title">할일</string>
+    <string name="label_set_enddt">기한설정</string>
+    <string name="btn_delete">삭제</string>
+    <string name="btn_set">설정</string>
+    <string name="btn_cancel">취소</string>
+    <string name="btn_add">추가</string>
 </resources>
