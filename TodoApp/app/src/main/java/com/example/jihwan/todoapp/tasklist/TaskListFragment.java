@@ -31,6 +31,7 @@ import butterknife.Optional;
 
 public class TaskListFragment extends BaseFragment {
 
+    public static final int REQUEST_CODE_DETAIL = 2001;
     @BindView(R.id.rvList)
     RecyclerView rvList;
 
@@ -87,8 +88,26 @@ public class TaskListFragment extends BaseFragment {
 
     @Subscribe
     public void onEventTask(TaskEvent taskEvent) {
-        Intent intent = new Intent(getActivity(), TaskDetailActivity.class);
-        intent.putExtra(TaskDetailActivity.EXTRA_TASK_ID, taskEvent.getTask().getId());
-        startActivity(intent);
+        if (taskEvent.getTask() == null)
+            return;
+        if (taskEvent.getAction() == TaskEvent.ACTION_GO_DETAIL) {
+            Intent intent = new Intent(getActivity(), TaskDetailActivity.class);
+            intent.putExtra(TaskDetailActivity.EXTRA_TASK_ID, taskEvent.getTask().getId());
+            startActivityForResult(intent, REQUEST_CODE_DETAIL);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == REQUEST_CODE_DETAIL) {
+            if (resultCode == TaskDetailActivity.RESULT_DELETE) {
+                long taskId = data.getLongExtra(TaskDetailActivity.EXTRA_TASK_ID, -1L);
+                getTaskList();
+            } else if (resultCode == TaskDetailActivity.RESULT_OK) {
+                getTaskList();
+            }
+        }
     }
 }

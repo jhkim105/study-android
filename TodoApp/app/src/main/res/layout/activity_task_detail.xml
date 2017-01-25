@@ -15,52 +15,63 @@
         <include layout="@layout/toolbar_task_detail" />
     </android.support.v7.widget.Toolbar>
 
-    <TextView
-        android:text="@string/label_set_enddt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView2"
-        android:textColor="@color/blue_800"
-        android:layout_marginTop="10dp" />
-
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0">
+        android:layout_height="match_parent"
+        android:padding="16dp">
 
         <TextView
-            android:text="설정안됨"
-            android:layout_width="wrap_content"
+            android:text="@string/label_set_enddt"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/tvDeadline"
-            android:layout_weight="1" />
+            android:id="@+id/textView2"
+            android:textColor="@color/blue_800"
+            android:layout_marginTop="10dp" />
 
-        <Button
-            style="@style/DialogButton"
-            android:text="@string/btn_delete"
-            android:layout_width="50dp"
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/btnDeadlineDelete"
-            tools:visibility="visible"
-            android:visibility="gone" />
+            android:layout_weight="0">
 
-        <Button
-            style="@style/DialogButton"
-            android:text="@string/btn_set"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/btnDeadline"
-            android:layout_weight="0" />
+            <TextView
+                android:text="설정안됨"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvDeadline"
+                android:layout_weight="1" />
 
-    </LinearLayout>
+            <Button
+                style="@style/DialogButton"
+                android:text="@string/btn_delete"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnDeadlineDelete"
+                tools:visibility="visible"
+                android:visibility="gone" />
 
-    <EditText
+            <Button
+                style="@style/DialogButton"
+                android:text="@string/btn_set"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnDeadline"
+                android:layout_weight="0" />
+
+        </LinearLayout>
+        <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:id="@+id/etMemo"
-        android:hint="@string/hint_memo" />
+        android:layout_height="1dp"
+            android:background="#000"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/etMemo"
+            android:hint="@string/hint_memo"
+            android:background="@drawable/memo_bg"
+            android:padding="10dp"
+            android:layout_marginTop="5dp" />
+    </LinearLayout>
 
 </LinearLayout>

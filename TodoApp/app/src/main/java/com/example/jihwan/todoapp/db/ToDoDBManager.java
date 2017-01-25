@@ -100,4 +100,16 @@ public class ToDoDBManager {
         return result > 0;
     }
 
+    public long updateTask(Task task) {
+        db = helper.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(TaskEntry.COLUMN_TITLE, task.getTitle());
+        contentValues.put(TaskEntry.COLUMN_DEADLINE, task.getDeadLine());
+        contentValues.put(TaskEntry.COLUMN_MEMO, task.getMemo());
+        contentValues.put(TaskEntry.COLUMN_COMPLETED, task.isCompleted());
+        long result = db.update(TaskEntry.TABLE_NAME,
+                contentValues, TaskEntry._ID + "=?", new String[]{String.valueOf(task.getId())});
+        db.close();
+        return result;
+    }
 }
