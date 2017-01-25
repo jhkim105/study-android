@@ -4,9 +4,11 @@ import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatDialogFragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -14,6 +16,8 @@ import android.widget.TextView;
 
 import com.example.jihwan.todoapp.R;
 import com.example.jihwan.todoapp.Task;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -55,6 +59,21 @@ public class AddTaskDialog  extends AppCompatDialogFragment implements DatePicke
         return view;
     }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        etTitle.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    onClickAdd();
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
     @OnClick(R.id.btnDeadline)
     public void onClickSetDeadline() {
 
@@ -93,5 +112,21 @@ public class AddTaskDialog  extends AppCompatDialogFragment implements DatePicke
     @OnClick(R.id.btnDeadlineDelete)
     public void onClickDealineDelete() {
         updateDeadline(-1L);
+    }
+
+    @OnClick(R.id.btnCancel)
+    public void onClickCancel() {
+        dismiss();
+    }
+
+    @OnClick(R.id.btnAdd)
+    public void onClickAdd() {
+        String title = etTitle.getText().toString().trim();
+        if (title.isEmpty()) return;
+        task.setTitle(title);
+        AddTaskEvent event = new AddTaskEvent();
+        event.task = task;
+        EventBus.getDefault().post(event);
+        dismiss();
     }
 }

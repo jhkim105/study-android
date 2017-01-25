@@ -1,10 +1,25 @@
 package com.example.jihwan.todoapp;
 
+import android.database.Cursor;
+
+import com.example.jihwan.todoapp.db.TaskEntry;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 /**
  * Created by jihwan on 21/12/2016.
  */
 
+@Getter
+@Setter
+@ToString
 public class Task {
+
+    public static final long NO_DEADLINE = -1l;
+
+    private long id;
 
     private String title;
 
@@ -14,35 +29,21 @@ public class Task {
 
     private boolean completed;
 
-    public boolean isCompleted() {
-        return completed;
+    public Task() {
+        id = -1l;
+        title = "";
+        memo = "";
+        deadLine = NO_DEADLINE;
+        completed = false;
     }
 
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
+    public Task(Cursor cursor) {
+        id = cursor.getLong(cursor.getColumnIndex(TaskEntry._ID));
+        title = cursor.getString(cursor.getColumnIndex(TaskEntry.COLUMN_TITLE));
+        memo = cursor.getString(cursor.getColumnIndex(TaskEntry.COLUMN_MEMO));
+        deadLine = cursor.getLong(cursor.getColumnIndex(TaskEntry.COLUMN_DEADLINE));
+        completed = "1".equals(cursor.getString(cursor.getColumnIndex(TaskEntry.COLUMN_COMPLETED)));
+
     }
 
-    public Long getDeadLine() {
-        return deadLine;
-    }
-
-    public void setDeadLine(Long deadLine) {
-        this.deadLine = deadLine;
-    }
-
-    public String getMemo() {
-        return memo;
-    }
-
-    public void setMemo(String memo) {
-        this.memo = memo;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
 }

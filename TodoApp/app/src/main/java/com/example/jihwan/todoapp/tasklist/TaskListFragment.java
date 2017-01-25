@@ -1,5 +1,6 @@
 package com.example.jihwan.todoapp.tasklist;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,10 @@ import android.view.ViewGroup;
 import com.example.jihwan.todoapp.R;
 import com.example.jihwan.todoapp.Task;
 import com.example.jihwan.todoapp.base.BaseFragment;
+import com.example.jihwan.todoapp.db.ToDoDBManager;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,10 +54,41 @@ public class TaskListFragment extends BaseFragment {
         taskListAdapter = new TaskListAdapter(tasks);
 
         rvList.setAdapter(taskListAdapter);
+
+        getTaskList();
+
+    }
+
+    public void getTaskList() {
+        tasks.clear();
+        tasks.addAll(ToDoDBManager.getInstance().getAllTask());
+        taskListAdapter.notifyDataSetChanged();
     }
 
     public void addTask(Task task) {
         tasks.add(0, task);
-        taskListAdapter.notifyDataSetChanged();
+        task.setId(ToDoDBManager.getInstance().insertTask(task));
+        taskListAdapter.notifyItemChanged(0);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
+    }
+
+    @Subscribe
+    public void onEventTask(TaskEvent taskEvent) {
+        Intent intent = new Intent(getActivity(), TaskDetailActivity.class);
+        intent.putExtra(TaskDetailActivity.EXTRA_TASK_ID, taskEvent.getTask().getId());
+        startActivity(intent);
     }
 }

@@ -10,6 +10,9 @@ import android.widget.TextView;
 
 import com.example.jihwan.todoapp.R;
 import com.example.jihwan.todoapp.Task;
+import com.example.jihwan.todoapp.db.ToDoDBManager;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,9 +69,39 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
                     Task task = taskList.get(getAdapterPosition());
                     if (task.isCompleted() != isChecked) {
                         task.setCompleted(isChecked);
+                        ToDoDBManager.getInstance().updateTaskCompleted(task.getId(), task.isCompleted());
                     }
                 }
             });
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int pos = getAdapterPosition();
+                    Task task = taskList.get(pos);
+
+                    TaskEvent taskEvent = new TaskEvent();
+                    taskEvent.setAction(TaskEvent.ACTION_GO_DETAIL);
+                    taskEvent.setTask(task);
+                    EventBus.getDefault().post(taskEvent);
+                }
+            });
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    int pos = getAdapterPosition();
+                    Task task = taskList.get(pos);
+                    if (ToDoDBManager.getInstance().deleteTask(task.getId())) {
+                        taskList.remove(pos);
+                        notifyItemRemoved(pos);
+                        return true;
+                    }
+                    return false;
+                }
+            });
+
         }
+
     }
 }

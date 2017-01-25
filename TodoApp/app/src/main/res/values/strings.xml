@@ -6,4 +6,7 @@
     <string name="btn_set">설정</string>
     <string name="btn_cancel">취소</string>
     <string name="btn_add">추가</string>
+    <string name="hint_memo">메모</string>
+    <string name="label_delete">삭제</string>
+    <string name="label_save">저장</string>
 </resources>
