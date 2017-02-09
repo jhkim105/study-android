@@ -56,36 +56,6 @@ public class TaskService extends Service {
             }
         }).start();
 
-        new AsyncTask<Long, Integer, Boolean>() {
-
-            @Override
-            protected void onPreExecute() {
-                Log.d("jhkim", "onPreExecute");
-            }
-
-            @Override
-            protected void onProgressUpdate(Integer... values) {
-                Log.d("jhkim", "onProgressUpdat:" + values[0]);
-            }
-
-
-
-            @Override
-            protected Boolean doInBackground(Long... params) {
-                Log.d("jhkim", "doInBackground");
-                long param = params[0];
-                for(int i = 0; i < param; i++){
-                    publishProgress(i);
-                }
-                return param == 10L;
-            }
-
-            @Override
-            protected void onPostExecute(Boolean aBoolean) {
-                Log.d("jhkim", "onPostExecute:" + aBoolean);
-                Toast.makeText(getApplicationContext(), "Service Run!", Toast.LENGTH_SHORT).show();
-            }
-        }.execute(20L);
 
         stopSelf();
         return START_NOT_STICKY;

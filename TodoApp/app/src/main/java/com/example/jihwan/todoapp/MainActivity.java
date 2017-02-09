@@ -36,9 +36,6 @@ public class MainActivity extends BaseActivity {
                 .add(R.id.flContent, taskListFragment, TaskListFragment.class.getName())
                 .commit();
 
-        startService(new Intent(this, TaskService.class));
-
-
 
     }
 
