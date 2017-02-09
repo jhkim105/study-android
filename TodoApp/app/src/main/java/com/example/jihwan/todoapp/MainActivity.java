@@ -38,6 +38,8 @@ public class MainActivity extends BaseActivity {
 
         startService(new Intent(this, TaskService.class));
 
+
+
     }
 
     @Override

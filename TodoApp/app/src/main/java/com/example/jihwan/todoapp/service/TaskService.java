@@ -6,11 +6,14 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.jihwan.todoapp.MainActivity;
 import com.example.jihwan.todoapp.R;
@@ -35,8 +38,54 @@ public class TaskService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        notifyCompletedTask();
 
+
+        final Handler handler = new Handler();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                notifyCompletedTask();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "ABC", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        }).start();
+
+        new AsyncTask<Long, Integer, Boolean>() {
+
+            @Override
+            protected void onPreExecute() {
+                Log.d("jhkim", "onPreExecute");
+            }
+
+            @Override
+            protected void onProgressUpdate(Integer... values) {
+                Log.d("jhkim", "onProgressUpdat:" + values[0]);
+            }
+
+
+
+            @Override
+            protected Boolean doInBackground(Long... params) {
+                Log.d("jhkim", "doInBackground");
+                long param = params[0];
+                for(int i = 0; i < param; i++){
+                    publishProgress(i);
+                }
+                return param == 10L;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean aBoolean) {
+                Log.d("jhkim", "onPostExecute:" + aBoolean);
+                Toast.makeText(getApplicationContext(), "Service Run!", Toast.LENGTH_SHORT).show();
+            }
+        }.execute(20L);
 
         stopSelf();
         return START_NOT_STICKY;
@@ -48,6 +97,7 @@ public class TaskService extends Service {
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
+        setAlarm(calendar.getTimeInMillis());
 
         List<Task> taskList = ToDoDBManager.getInstance().getIncompleteTasks(calendar.getTimeInMillis());
 
@@ -83,11 +133,13 @@ public class TaskService extends Service {
     }
 
     private void setAlarm(long date) {
+        Log.d("jhkim", "SetAlarm!!!");
         PendingIntent pendingIntent = PendingIntent.getService(this, 9876, new Intent(this, TaskService.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, date, pendingIntent);
+        long debugDate = System.currentTimeMillis() + 30000;
+        alarmManager.set(AlarmManager.RTC_WAKEUP, debugDate, pendingIntent);
 
     }
 }
