@@ -116,6 +116,8 @@ public class AddTaskDialog  extends AppCompatDialogFragment implements DatePicke
 
     @OnClick(R.id.btnCancel)
     public void onClickCancel() {
+        AddTaskEvent event = new AddTaskEvent();
+        EventBus.getDefault().post(event);
         dismiss();
     }
 
