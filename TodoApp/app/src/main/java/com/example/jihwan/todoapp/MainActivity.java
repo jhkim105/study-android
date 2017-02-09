@@ -1,11 +1,13 @@
 package com.example.jihwan.todoapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
 import com.example.jihwan.todoapp.base.BaseActivity;
 import com.example.jihwan.todoapp.common.AddTaskDialog;
 import com.example.jihwan.todoapp.common.AddTaskEvent;
+import com.example.jihwan.todoapp.service.TaskService;
 import com.example.jihwan.todoapp.tasklist.TaskListFragment;
 
 import org.greenrobot.eventbus.EventBus;
@@ -33,6 +35,8 @@ public class MainActivity extends BaseActivity {
                 .beginTransaction()
                 .add(R.id.flContent, taskListFragment, TaskListFragment.class.getName())
                 .commit();
+
+        startService(new Intent(this, TaskService.class));
 
     }
 

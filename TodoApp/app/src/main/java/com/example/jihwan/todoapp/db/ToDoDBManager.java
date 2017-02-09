@@ -83,6 +83,29 @@ public class ToDoDBManager {
         return taskList;
     }
 
+
+    public List<Task> getIncompleteTasks(long date) {
+        List<Task> taskList = new ArrayList<>();
+
+        db = helper.getReadableDatabase();
+
+//        Cursor cursor = db.query(TaskEntry.TABLE_NAME, null, null, null, null, null, TaskEntry._ID + " desc", null);
+
+        String sql = String.format("SELECT * FROM %s WHERE %s BETWEEN 0 AND %s AND  %s=0 ORDER BY %s DESC;",
+                TaskEntry.TABLE_NAME, TaskEntry.COLUMN_DEADLINE, date, TaskEntry.COLUMN_COMPLETED, TaskEntry._ID);
+
+        Cursor cursor = db.rawQuery(sql, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Task task = new Task(cursor);
+                taskList.add(task);
+            } while(cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return taskList;
+    }
+
     public long updateTaskCompleted(long id, boolean completed) {
         db = helper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -112,4 +135,7 @@ public class ToDoDBManager {
         db.close();
         return result;
     }
+
+
+
 }
