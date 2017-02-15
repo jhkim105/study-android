@@ -34,6 +34,7 @@ public class WidgetAddTaskActivity extends BaseActivity {
         if (event.task != null) {
             ToDoDBManager.getInstance().insertTask(event.task);
         }
+        finish();
 
     }
 
