@@ -23,6 +23,7 @@ public class WidgetAddTaskActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(R.anim.widget_enter, 0);
 
         AddTaskDialog addTaskDialog  = new AddTaskDialog();
         addTaskDialog.setCancelable(false);

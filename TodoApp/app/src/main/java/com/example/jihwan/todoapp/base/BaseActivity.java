@@ -2,6 +2,7 @@ package com.example.jihwan.todoapp.base;
 
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.support.annotation.LayoutRes;
 import android.support.v7.app.AppCompatActivity;
 
 import butterknife.ButterKnife;
@@ -11,6 +12,8 @@ import butterknife.ButterKnife;
  */
 
 public abstract class BaseActivity extends AppCompatActivity {
+
+    @LayoutRes
     protected abstract int getLayoutResId();
 
     @Override

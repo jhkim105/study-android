@@ -46,6 +46,7 @@
 
         <activity android:name=".widgent.WidgetAddTaskActivity"
             android:theme="@style/widgetAddTask"></activity>
+        <activity android:name=".setting.SettingActivity" android:label="@string/label_setting"/>
     </application>
 
 </manifest>

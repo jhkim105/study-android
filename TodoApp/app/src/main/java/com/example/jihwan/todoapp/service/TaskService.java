@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.NotificationCompat;
@@ -19,6 +20,7 @@ import com.example.jihwan.todoapp.MainActivity;
 import com.example.jihwan.todoapp.R;
 import com.example.jihwan.todoapp.Task;
 import com.example.jihwan.todoapp.db.ToDoDBManager;
+import com.example.jihwan.todoapp.util.IntentUtils;
 
 import java.util.Calendar;
 import java.util.List;
@@ -67,7 +69,9 @@ public class TaskService extends Service {
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
-        setAlarm(calendar.getTimeInMillis());
+
+        boolean useNoti = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("use_noti", true);
+        IntentUtils.setServiceAlarm(getApplicationContext(), useNoti);
 
         List<Task> taskList = ToDoDBManager.getInstance().getIncompleteTasks(calendar.getTimeInMillis());
 
