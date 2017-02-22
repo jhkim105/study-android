@@ -21,6 +21,7 @@ import com.example.jihwan.todoapp.R;
 import com.example.jihwan.todoapp.Task;
 import com.example.jihwan.todoapp.base.BaseActivity;
 import com.example.jihwan.todoapp.db.ToDoDBManager;
+import com.example.jihwan.todoapp.realm.TaskRealmManager;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -42,6 +43,8 @@ public class TaskDetailActivity extends BaseActivity  implements DatePickerDialo
     private Task task;
 
     public static final int RESULT_DELETE = 900;
+
+    private TaskRealmManager taskRealmManager;
 
 
     @BindView(R.id.toolbar)
@@ -90,7 +93,8 @@ public class TaskDetailActivity extends BaseActivity  implements DatePickerDialo
             return;
         }
 
-        task = ToDoDBManager.getInstance().getTask(taskId);
+        taskRealmManager = new TaskRealmManager();
+        task = taskRealmManager.getTask(taskId);
         initTaskDetail(task);
     }
 
@@ -106,7 +110,7 @@ public class TaskDetailActivity extends BaseActivity  implements DatePickerDialo
 
 
     private void updateDeadline(long time) {
-        task.setDeadLine(time);
+        taskRealmManager.updateTaskDeadLine(task, time);
         if (time > 0) {
             btnDeadLineDelete.setVisibility(View.VISIBLE);
             DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
@@ -148,26 +152,18 @@ public class TaskDetailActivity extends BaseActivity  implements DatePickerDialo
     }
 
     private void deleteTask(long id) {
-        if (ToDoDBManager.getInstance().deleteTask(id)) {
-            Intent intent = new Intent();
-            intent.putExtra(EXTRA_TASK_ID, id);
-            setResult(RESULT_DELETE, intent);
-            finish();
-        }
+        taskRealmManager.deleteTask(id);
+        finish();
     }
 
     private void updateTask() {
         String title = etTitle.getText().toString().trim();
         if (!TextUtils.isEmpty(title)) {
-            task.setTitle(etTitle.getText().toString());
-            task.setCompleted(cbCompleted.isChecked());
-            task.setMemo(etMemo.getText().toString().trim());
-            if (ToDoDBManager.getInstance().updateTask(task) > 0) {
-                Intent intent = new Intent();
-                intent.putExtra(EXTRA_TASK_ID, taskId);
-                setResult(RESULT_OK, intent);
-                finish();
-            }
+            taskRealmManager.updateTask(task, etTitle.getText().toString(),
+                    etMemo.getText().toString().trim(),
+                    cbCompleted.isChecked());
+
+            finish();
 
         } else {
             Toast.makeText(this, "Plz Input title", Toast.LENGTH_SHORT).show();
@@ -205,5 +201,14 @@ public class TaskDetailActivity extends BaseActivity  implements DatePickerDialo
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putLong(EXTRA_TASK_ID, taskId);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if(taskRealmManager != null) {
+            taskRealmManager.close();
+        }
     }
 }

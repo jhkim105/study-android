@@ -14,6 +14,7 @@ import com.example.jihwan.todoapp.R;
 import com.example.jihwan.todoapp.Task;
 import com.example.jihwan.todoapp.base.BaseFragment;
 import com.example.jihwan.todoapp.db.ToDoDBManager;
+import com.example.jihwan.todoapp.realm.TaskRealmManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -24,12 +25,14 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Optional;
+import io.realm.RealmChangeListener;
+import io.realm.RealmResults;
 
 /**
  * Created by jihwan on 21/12/2016.
  */
 
-public class TaskListFragment extends BaseFragment {
+public class TaskListFragment extends BaseFragment implements RealmChangeListener<RealmResults<Task>> {
 
     public static final int REQUEST_CODE_DETAIL = 2001;
     @BindView(R.id.rvList)
@@ -37,7 +40,9 @@ public class TaskListFragment extends BaseFragment {
 
     private TaskListAdapter taskListAdapter;
 
-    private List<Task> tasks;
+    private RealmResults<Task> tasks;
+
+    private TaskRealmManager realmManager;
 
     @Override
     protected int getLayoutResId() {
@@ -50,26 +55,20 @@ public class TaskListFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         rvList.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        tasks = new ArrayList<>();
+        realmManager = new TaskRealmManager();
 
+        tasks = realmManager.getTaskList();
+
+        tasks.addChangeListener(this);
         taskListAdapter = new TaskListAdapter(tasks);
 
         rvList.setAdapter(taskListAdapter);
 
-        getTaskList();
 
-    }
-
-    public void getTaskList() {
-        tasks.clear();
-        tasks.addAll(ToDoDBManager.getInstance().getAllTask());
-        taskListAdapter.notifyDataSetChanged();
     }
 
     public void addTask(Task task) {
-        tasks.add(0, task);
-        task.setId(ToDoDBManager.getInstance().insertTask(task));
-        taskListAdapter.notifyItemChanged(0);
+        realmManager.addTask(task);
     }
 
     @Override
@@ -101,13 +100,30 @@ public class TaskListFragment extends BaseFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == REQUEST_CODE_DETAIL) {
-            if (resultCode == TaskDetailActivity.RESULT_DELETE) {
-                long taskId = data.getLongExtra(TaskDetailActivity.EXTRA_TASK_ID, -1L);
-                getTaskList();
-            } else if (resultCode == TaskDetailActivity.RESULT_OK) {
-                getTaskList();
-            }
+//        if(requestCode == REQUEST_CODE_DETAIL) {
+//            if (resultCode == TaskDetailActivity.RESULT_DELETE) {
+//                long taskId = data.getLongExtra(TaskDetailActivity.EXTRA_TASK_ID, -1L);
+//                getTaskList();
+//            } else if (resultCode == TaskDetailActivity.RESULT_OK) {
+//                getTaskList();
+//            }
+//        }
+    }
+
+
+
+    @Override
+    public void onChange(RealmResults<Task> element) {
+        taskListAdapter.notifyDataSetChanged();
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        tasks.removeChangeListener(this);
+        if (realmManager != null) {
+            realmManager.close();
         }
     }
 }

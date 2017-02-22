@@ -4,6 +4,8 @@ import android.database.Cursor;
 
 import com.example.jihwan.todoapp.db.TaskEntry;
 
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -15,10 +17,11 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class Task {
+public class Task extends RealmObject {
 
     public static final long NO_DEADLINE = -1l;
 
+    @PrimaryKey
     private long id;
 
     private String title;

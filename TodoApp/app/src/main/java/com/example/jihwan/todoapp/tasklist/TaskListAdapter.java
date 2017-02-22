@@ -19,6 +19,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.RealmResults;
 
 /**
  * Created by jihwan on 21/12/2016.
@@ -26,9 +27,11 @@ import butterknife.ButterKnife;
 
 public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskViewHolder>{
 
-    List<Task> taskList;
+    private RealmResults<Task> taskList;
 
-    public TaskListAdapter(List<Task> taskList) {
+
+
+    public TaskListAdapter(RealmResults<Task> taskList) {
         this.taskList = taskList;
     }
 
@@ -67,6 +70,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     Task task = taskList.get(getAdapterPosition());
+
                     if (task.isCompleted() != isChecked) {
                         task.setCompleted(isChecked);
                         ToDoDBManager.getInstance().updateTaskCompleted(task.getId(), task.isCompleted());
